@@ -163,7 +163,9 @@ def create_origin_only_middleware():
                 origin_domain = parsed.hostname
 
             if loopback and host_domain is not None and origin_domain is not None and len(host_domain) > 0 and len(origin_domain) > 0:
-                if host_domain != origin_domain:
+                # 允许来自 localhost:3000 的请求
+                allowed_origins = ['localhost:3000', '127.0.0.1:3000', 'localhost:8188', '127.0.0.1:8188']
+                if origin_domain not in allowed_origins and host_domain != origin_domain:
                     logging.warning("WARNING: request with non matching host and origin {} != {}, returning 403".format(host_domain, origin_domain))
                     return web.Response(status=403)
 
