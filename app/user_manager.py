@@ -63,6 +63,15 @@ class UserManager():
             if user.startswith(folder_paths.SYSTEM_USER_PREFIX):
                 raise KeyError("Unknown user: " + user)
 
+            # Auto-register proxy users (Comfy-Cloud integration)
+            if user and user not in self.users:
+                self.users[user] = user
+                try:
+                    with open(self.get_users_file(), "w") as f:
+                        json.dump(self.users, f)
+                except Exception as e:
+                    logging.warning(f"Failed to save users.json: {e}")
+
         if user not in self.users:
             raise KeyError("Unknown user: " + user)
 
